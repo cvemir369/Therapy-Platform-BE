@@ -25,6 +25,7 @@ const userSchema = new Schema({
   password: { type: String, required: [true, "Password is required"] },
   image: { type: String, default: "" },
   role: { type: String, enum: ROLES, default: "user" },
+  isActive: { type: Boolean, default: true }, // for soft delete
   emotionalStates: [{ type: Schema.Types.ObjectId, ref: "EmotionalState" }],
   challenges: [{ type: Schema.Types.ObjectId, ref: "Challenges" }],
   thoughts: [{ type: Schema.Types.ObjectId, ref: "Thoughts" }],
