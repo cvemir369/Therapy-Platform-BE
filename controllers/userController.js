@@ -81,113 +81,60 @@ export const createUser = asyncHandler(async (req, res, next) => {
 //   res.status(200).json(user);
 // });
 
-// // Update user by id
-// export const updateUser = asyncHandler(async (req, res, next) => {
-//   const user = await User.findById(req.params.id);
-//   if (!user) {
-//     return next(new ErrorResponse("User not found", 404));
-//   }
+// Update user by id
+export const updateUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new ErrorResponse("User not found", 404));
+  }
 
-//   const { username, email, password } = req.body;
-//   if (email && (await User.findOne({ email }))) {
-//     return next(new ErrorResponse("Email is already taken", 400));
-//   }
+  const { email, username, password } = req.body;
+  if (email && (await User.findOne({ email }))) {
+    return next(new ErrorResponse("Email is already taken", 400));
+  }
 
-//   if (username && (await User.findOne({ username }))) {
-//     return next(new ErrorResponse("Username is already taken", 400));
-//   }
+  if (username && (await User.findOne({ username }))) {
+    return next(new ErrorResponse("Username is already taken", 400));
+  }
 
-//   if (password) {
-//     req.body.password = await bcrypt.hash(password, 10);
-//   }
+  if (password) {
+    req.body.password = await bcrypt.hash(password, 10);
+  }
 
-//   const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-//     new: true,
-//     runValidators: true,
-//   });
-//   res.status(200).json(updatedUser);
-// });
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json(updatedUser);
+});
 
-// // Delete user by id
-// export const deleteUser = asyncHandler(async (req, res, next) => {
-//   const user = await User.findById(req.params.id);
-//   if (!user) {
-//     return next(new ErrorResponse("User not found", 404));
-//   }
-//   const leaderboard = await Leaderboard.findOne({ user_id: user._id });
-//   if (leaderboard) {
-//     await Leaderboard.findByIdAndDelete(leaderboard._id);
-//   }
-//   await User.findByIdAndDelete(user._id);
+// Delete user by id - soft delete only - set isActive to false
+export const deleteUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new ErrorResponse("User not found", 404));
+  }
+  user.isActive = false; // soft delete
+  // await User.findByIdAndDelete(user._id); // hard delete in case needed
+  user.name = "Deleted User"; // change name to Deleted User
+  user.phoneNumber = "000000"; // change phone number to 000000
+  user.email = "deleted_" + user._id + "@example.com"; // change email to deleted_id@example.com
+  user.username = "deleted_user_" + user._id; // change username to deleted_user_id
+  user.save();
+  res.clearCookie("token");
+  res.status(200).json({ message: "User deleted successfully" });
+});
 
-//   res.clearCookie("token");
-//   res.status(200).json({ message: "User deleted successfully" });
-// });
-
-// // Set user image - profile picture
-// export const setUserImage = asyncHandler(async (req, res, next) => {
-//   const user = await User.findById(req.params.id);
-//   if (!user) {
-//     return next(new ErrorResponse("User not found", 404));
-//   }
-//   user.image = req.body.image; // req.file is the image file but we can use pokemon image from API as well
-//   await user.save();
-//   res.status(200).json(user);
-// });
-
-// // Set user score, wins, losses, calculate winLossRatio and gamesPlayed
-// export const setUserStats = asyncHandler(async (req, res, next) => {
-//   const user = await User.findById(req.params.id);
-//   if (!user) {
-//     return next(new ErrorResponse("User not found", 404));
-//   }
-//   user.score = req.body.score;
-//   user.wins = req.body.wins;
-//   user.losses = req.body.losses;
-//   if (user.wins + user.losses === 0) {
-//     user.winLossRatio = 0;
-//     user.gamesPlayed = 0;
-//   } else {
-//     user.winLossRatio = (user.wins / (user.wins + user.losses)).toFixed(2);
-//     user.gamesPlayed = user.wins + user.losses;
-//   }
-//   await user.save();
-
-//   // Update leaderboard
-//   const leaderboard = await Leaderboard.findOne({ user_id: user._id });
-//   if (!leaderboard) {
-//     await Leaderboard.create({ user_id: user._id });
-//   }
-//   res.status(200).json(user);
-// });
-
-// // Add pokemon to user's roster
-// export const addPokemon = asyncHandler(async (req, res, next) => {
-//   const user = await User.findById(req.params.id);
-//   if (!user) {
-//     return next(new ErrorResponse("User not found", 404));
-//   }
-//   if (user.roster.includes(req.body.pokemonId)) {
-//     return next(new ErrorResponse("Pokemon already in roster", 400));
-//   }
-//   user.roster.push(req.body.pokemonId);
-//   await user.save();
-//   res.status(200).json(user);
-// });
-
-// // Remove pokemon from user's roster
-// export const removePokemon = asyncHandler(async (req, res, next) => {
-//   const user = await User.findById(req.params.id);
-//   if (!user) {
-//     return next(new ErrorResponse("User not found", 404));
-//   }
-//   if (!user.roster.includes(req.body.pokemonId)) {
-//     return next(new ErrorResponse("Pokemon not found in roster", 404));
-//   }
-//   user.roster = user.roster.filter((id) => id !== req.body.pokemonId);
-//   await user.save();
-//   res.status(200).json(user);
-// });
+// // Set user's image - profile picture
+export const setUserImage = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new ErrorResponse("User not found", 404));
+  }
+  user.image = req.body.image;
+  await user.save();
+  res.status(200).json(user);
+});
 
 // Login user
 export const loginUser = asyncHandler(async (req, res, next) => {
