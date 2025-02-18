@@ -1,31 +1,19 @@
-import User from "./user/User.js";
-import EmotionalState from "./user/EmotionalState.js";
-import Challenge from "./user/Challenge.js";
-import DistressingThought from "./user/DistressingThought.js";
-import TypeOfTherapy from "./user/TypeOfTherapy.js";
-import AchieveGoal from "./user/AchieveGoal.js";
-import Journal from "./user/Journal.js";
-import Therapist from "./therapist/Therapist.js";
-import Specialty from "./therapist/Specialty.js";
-import Approach from "./therapist/Approach.js";
-import Experience from "./therapist/Experience.js";
-import ClientType from "./therapist/ClientType.js";
-import AdditionalService from "./therapist/AdditionalService.js";
+import User from "./User.js";
+import Therapist from "./Therapist.js";
+import Journal from "./Journal.js";
 import Message from "./Message.js";
+import UserQuestion from "./UserQuestion.js";
+import UserAnswer from "./UserAnswer.js";
+import TherapistQuestion from "./TherapistQuestion.js";
+import TherapistAnswer from "./TherapistAnswer.js";
 
 export {
   User,
-  EmotionalState,
-  Challenge,
-  DistressingThought,
-  TypeOfTherapy,
-  AchieveGoal,
-  Journal,
   Therapist,
-  Specialty,
-  Approach,
-  Experience,
-  ClientType,
-  AdditionalService,
+  Journal,
   Message,
+  UserQuestion,
+  UserAnswer,
+  TherapistQuestion,
+  TherapistAnswer,
 };
