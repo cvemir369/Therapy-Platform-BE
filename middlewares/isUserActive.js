@@ -1,5 +1,5 @@
 import ErrorResponse from "../utils/ErrorResponse.js";
-import User from "../models/user/User.js";
+import { User } from "../models/index.js";
 
 // Middleware to check if user is active / soft deleted
 const isUserActive = async (req, res, next) => {
