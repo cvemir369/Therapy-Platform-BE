@@ -7,8 +7,6 @@ import TypeOfTherapy from "./TypeOfTherapy.js";
 import AchieveGoal from "./AchieveGoal.js";
 import Journal from "./Journal.js";
 
-const ROLES = ["user", "therapist"];
-
 const userSchema = new Schema({
   name: { type: String, required: [true, "Name is required"] },
   phoneNumber: { type: String, required: [true, "Phone number is required"] },
@@ -24,7 +22,6 @@ const userSchema = new Schema({
   },
   password: { type: String, required: [true, "Password is required"] },
   image: { type: String, default: "" },
-  role: { type: String, enum: ROLES, default: "user" },
   isActive: { type: Boolean, default: true }, // for soft delete
   emotionalStates: [{ type: Schema.Types.ObjectId, ref: "EmotionalState" }],
   challenges: [{ type: Schema.Types.ObjectId, ref: "Challenges" }],

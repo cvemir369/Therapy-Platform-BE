@@ -1,5 +1,4 @@
 import { Router } from "express";
-// import isUserVerified from "../middlewares/isUserVerified.js";
 import isUserActive from "../middlewares/isUserActive.js";
 import isUserAuthorized from "../middlewares/isUserAuthorized.js";
 import isUserOwner from "../middlewares/isUserOwner.js";
@@ -9,7 +8,6 @@ import {
   getUser,
   updateUser,
   deleteUser,
-  setUserImage,
   loginUser,
   logoutUser,
   checkSession,
@@ -25,11 +23,9 @@ userRouter
   .route("/:id")
   .get(isUserAuthorized, getUser)
   .put(isUserAuthorized, isUserOwner, updateUser)
-  .delete(isUserAuthorized, isUserOwner, deleteUser)
-  .patch(isUserAuthorized, isUserOwner, setUserImage);
+  .delete(isUserAuthorized, isUserOwner, deleteUser);
 
-// verify user, login, logout
-// userRouter.route("/verify/:verificationToken").post(verifyUser);
+// login, logout
 userRouter.route("/login").post(isUserActive, loginUser);
 userRouter.route("/logout").post(logoutUser);
 

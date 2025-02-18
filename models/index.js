@@ -11,6 +11,7 @@ import Approach from "./therapist/Approach.js";
 import Experience from "./therapist/Experience.js";
 import ClientType from "./therapist/ClientType.js";
 import AdditionalService from "./therapist/AdditionalService.js";
+import Message from "./Message.js";
 
 export {
   User,
@@ -26,4 +27,5 @@ export {
   Experience,
   ClientType,
   AdditionalService,
+  Message,
 };
