@@ -22,10 +22,10 @@ export const getUser = asyncHandler(async (req, res, next) => {
 
 // Create and login a new user
 export const createUser = asyncHandler(async (req, res, next) => {
-  const { name, phoneNumber, email, username, password, image } = req.body;
+  const { name, phone, email, username, password, image } = req.body;
 
   try {
-    if (!name || !phoneNumber || !email || !username || !password) {
+    if (!name || !phone || !email || !username || !password) {
       return next(new ErrorResponse("Please provide all required fields", 400));
     }
 
@@ -41,7 +41,7 @@ export const createUser = asyncHandler(async (req, res, next) => {
 
     const newUser = new User({
       name,
-      phoneNumber,
+      phone,
       email,
       username,
       password: hashedPassword,
@@ -104,7 +104,7 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
   }
   user.isActive = false; // soft delete
   user.name = `Deleted User ${user._id}`; // change name to Deleted User with unique ID
-  user.phoneNumber = "000000"; // change phone number to 000000
+  user.phone = "000000"; // change phone number to 000000
   user.email = "deleted_" + user._id + "@example.com"; // change email to deleted_id@example.com
   user.username = "deleted_user_" + user._id; // change username to deleted_user_id
   user.password = await bcrypt.hash("deleted", 10); // change password to hashed deleted
