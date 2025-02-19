@@ -1,4 +1,4 @@
-import UserQuestion from "../models/UserQuestion.js";
+import { UserQuestion } from "../models/index.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 
@@ -37,37 +37,3 @@ export const createUserQuestion = asyncHandler(async (req, res, next) => {
     next(error);
   }
 });
-
-// // Update a userQuestion
-// export const updateUserQuestion = asyncHandler(async (req, res, next) => {
-//   const { question, choices } = req.body;
-
-//   try {
-//     const userQuestion = await UserQuestion.findById(req.params.id);
-//     if (!userQuestion) {
-//       return next(new ErrorResponse("User question not found", 404));
-//     } else {
-//       userQuestion.question = question || userQuestion.question;
-//       userQuestion.choices = choices || userQuestion.choices;
-//       await userQuestion.save();
-//       res.status(200).json(userQuestion);
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// // Delete a userQuestion
-// export const deleteUserQuestion = asyncHandler(async (req, res, next) => {
-//   try {
-//     const userQuestion = await UserQuestion.findById(req.params.id);
-//     if (!userQuestion) {
-//       return next(new ErrorResponse("UserQuestion not found", 404));
-//     } else {
-//       await userQuestion.remove();
-//       res.status(200).json(userQuestion);
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// });
