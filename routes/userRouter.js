@@ -1,7 +1,7 @@
 import { Router } from "express";
-import isUserActive from "../middlewares/isUserActive.js";
-import isUserAuthorized from "../middlewares/isUserAuthorized.js";
-import isUserOwner from "../middlewares/isUserOwner.js";
+import isActive from "../middlewares/isActive.js";
+import isAuthorized from "../middlewares/isAuthorized.js";
+import isOwner from "../middlewares/isOwner.js";
 import {
   createUser,
   getUsers,
@@ -16,30 +16,50 @@ import {
   createUserAnswer,
   getUserAnswers,
 } from "../controllers/userAnswerController.js";
+import {
+  createJournal,
+  getJournals,
+  getJournal,
+  updateJournal,
+  deleteJournal,
+} from "../controllers/journalController.js";
 
 const userRouter = Router();
 
 // get all users, create user
-userRouter.route("/").get(isUserAuthorized, getUsers).post(createUser);
+userRouter.route("/").get(isAuthorized, getUsers).post(createUser);
 
 // get, update, delete user
 userRouter
   .route("/:id")
-  .get(isUserAuthorized, getUser)
-  .put(isUserAuthorized, isUserOwner, updateUser)
-  .delete(isUserAuthorized, isUserOwner, deleteUser);
+  .get(isAuthorized, getUser)
+  .put(isAuthorized, isOwner, updateUser)
+  .delete(isAuthorized, isOwner, deleteUser);
 
 // get all user answers, create user answer
 userRouter
   .route("/:id/user-answers")
-  .get(getUserAnswers)
-  .post(createUserAnswer);
+  .get(isAuthorized, getUserAnswers)
+  .post(isAuthorized, createUserAnswer);
+
+// get all journals, create journal
+userRouter
+  .route("/:id/journals")
+  .get(isAuthorized, getJournals)
+  .post(isAuthorized, createJournal);
+
+// get, update, delete journal
+userRouter
+  .route("/:id/journals/:journalId")
+  .get(isAuthorized, getJournal)
+  .put(isAuthorized, isOwner, updateJournal)
+  .delete(isAuthorized, isOwner, deleteJournal);
 
 // login, logout
-userRouter.route("/login").post(isUserActive, loginUser);
+userRouter.route("/login").post(isActive, loginUser);
 userRouter.route("/logout").post(logoutUser);
 
 // check session
-userRouter.route("/check-session/:id").get(isUserAuthorized, checkSession);
+userRouter.route("/check-session/:id").get(isAuthorized, checkSession);
 
 export default userRouter;
