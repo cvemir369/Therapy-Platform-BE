@@ -12,6 +12,10 @@ import {
   logoutUser,
   checkSession,
 } from "../controllers/userController.js";
+import {
+  createUserAnswer,
+  getUserAnswers,
+} from "../controllers/userAnswerController.js";
 
 const userRouter = Router();
 
@@ -24,6 +28,12 @@ userRouter
   .get(isUserAuthorized, getUser)
   .put(isUserAuthorized, isUserOwner, updateUser)
   .delete(isUserAuthorized, isUserOwner, deleteUser);
+
+// get all user answers, create user answer
+userRouter
+  .route("/:id/user-answers")
+  .get(getUserAnswers)
+  .post(createUserAnswer);
 
 // login, logout
 userRouter.route("/login").post(isUserActive, loginUser);

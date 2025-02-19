@@ -12,6 +12,10 @@ import {
   logoutTherapist,
   checkSession,
 } from "../controllers/therapistController.js";
+import {
+  createTherapistAnswer,
+  getTherapistAnswers,
+} from "../controllers/therapistAnswerController.js";
 
 const therapistRouter = Router();
 
@@ -24,6 +28,12 @@ therapistRouter
   .get(getTherapist)
   .put(updateTherapist)
   .delete(deleteTherapist);
+
+// get all therapist answers, create therapist answer
+therapistRouter
+  .route("/:id/therapist-answers")
+  .get(getTherapistAnswers)
+  .post(createTherapistAnswer);
 
 // login, logout
 therapistRouter.route("/login").post(loginTherapist);

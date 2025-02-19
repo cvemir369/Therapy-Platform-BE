@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { JWT_SECRET, NODE_ENV } from "../config/config.js";
 
-// Get all users
+// Get all users - but only active users (not soft deleted)
 export const getUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find();
+  const users = await User.find({ isActive: true });
   res.status(200).json(users);
 });
 
