@@ -5,7 +5,9 @@ import "./db/index.js";
 import { PORT, BASE_URL_FRONTEND } from "./config/config.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import userRouter from "./routes/userRouter.js";
-import emotionalStateRouter from "./routes/emotionalStateRouter.js";
+import therapistRouter from "./routes/therapistRouter.js";
+import userQuestionRouter from "./routes/userQuestionRouter.js";
+import therapistQuestionRouter from "./routes/therapistQuestionRouter.js";
 
 const app = express();
 
@@ -20,7 +22,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", userRouter);
-app.use("/emotional-states", emotionalStateRouter);
+app.use("/therapists", therapistRouter);
+app.use("/user-questions", userQuestionRouter);
+app.use("/therapist-questions", therapistQuestionRouter);
 
 app.use("*", (req, res) => res.status(404).json({ message: "Page not found" }));
 app.use(errorHandler);
