@@ -12,15 +12,3 @@ const messageSchema = new Schema({
 });
 
 export default model("Message", messageSchema);
-
-// When querying messages, you can use the fromModel and toModel fields to determine which model to populate:
-// Message.find()
-//   .populate({ path: "from", model: "User" })
-//   .populate({ path: "to", model: "Therapist" })
-//   .exec((err, messages) => {
-//     if (err) {
-//       console.error(err);
-//     } else {
-//       console.log(messages);
-//     }
-//   });

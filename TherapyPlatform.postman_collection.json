@@ -808,6 +808,96 @@
 			]
 		},
 		{
+			"name": "Message",
+			"item": [
+				{
+					"name": "get messages between 2 models",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/messages?from=67b50b9fea8dd770d804346f&fromModel=User&to=67b50f1cbe78cd4ec7c04285&toModel=Therapist",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"messages"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "67b50b9fea8dd770d804346f"
+								},
+								{
+									"key": "fromModel",
+									"value": "User"
+								},
+								{
+									"key": "to",
+									"value": "67b50f1cbe78cd4ec7c04285"
+								},
+								{
+									"key": "toModel",
+									"value": "Therapist"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// {\r\n//     \"from\": \"67b50b9fea8dd770d804346f\",\r\n//     \"fromModel\": \"User\",\r\n//     \"to\": \"67b50f1cbe78cd4ec7c04285\",\r\n//     \"toModel\": \"Therapist\",\r\n//     \"message\": \"I need help!\"\r\n// }\r\n\r\n{\r\n    \"from\": \"67b50f1cbe78cd4ec7c04285\",\r\n    \"fromModel\": \"Therapist\",\r\n    \"to\": \"67b50b9fea8dd770d804346f\",\r\n    \"toModel\": \"User\",\r\n    \"message\": \"I am here to help you!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/messages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"messages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "mark message as read",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/messages/67b72cf1eed7b14ee1a76cb3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"messages",
+								"67b72cf1eed7b14ee1a76cb3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "home server running",
 			"request": {
 				"method": "GET",
