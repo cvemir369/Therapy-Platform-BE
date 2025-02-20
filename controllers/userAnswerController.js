@@ -1,6 +1,7 @@
-import { UserAnswer } from "../models/index.js";
+import { UserAnswer, Diagnosis } from "../models/index.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
+import analyzeResponse from "../utils/openAi.js";
 
 // Get all userAnswers with related questions by user_id
 export const getUserAnswers = asyncHandler(async (req, res, next) => {
@@ -50,4 +51,41 @@ export const createUserAnswer = asyncHandler(async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+export const analyzeUserAnswers = asyncHandler(async (req, res, next) => {
+  const userAnswers = await UserAnswer.find({
+    user_id: req.params.id,
+  })
+    .populate({
+      path: "question_id",
+      select: "question", // Select only the question field from the question document
+    })
+    .populate({
+      path: "user_id",
+      select: "name", // Select only the name field from the user document
+    });
+
+  const analysis = await analyzeResponse(userAnswers);
+
+  // Find the user's existing diagnosis
+  let diagnosis = await Diagnosis.findOne({ user_id: req.params.id });
+
+  if (diagnosis) {
+    // Merge AI response with previous user answer analysis
+    diagnosis.userAnswerAnalysis = {
+      ...diagnosis.userAnswerAnalysis,
+      ...analysis,
+    };
+    await diagnosis.save();
+  } else {
+    // Create a new diagnosis if it doesn't exist
+    diagnosis = new Diagnosis({
+      user_id: req.params.id,
+      userAnswerAnalysis: analysis,
+    });
+    await diagnosis.save();
+  }
+
+  res.status(200).json({ analysis });
 });
