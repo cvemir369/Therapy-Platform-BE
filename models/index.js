@@ -6,6 +6,7 @@ import UserQuestion from "./UserQuestion.js";
 import UserAnswer from "./UserAnswer.js";
 import TherapistQuestion from "./TherapistQuestion.js";
 import TherapistAnswer from "./TherapistAnswer.js";
+import Diagnosis from "./Diagnosis.js";
 
 export {
   User,
@@ -16,4 +17,5 @@ export {
   UserAnswer,
   TherapistQuestion,
   TherapistAnswer,
+  Diagnosis,
 };

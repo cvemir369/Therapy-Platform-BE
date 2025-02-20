@@ -15,6 +15,7 @@ import {
 import {
   createUserAnswer,
   getUserAnswers,
+  analyzeUserAnswers,
 } from "../controllers/userAnswerController.js";
 import {
   createJournal,
@@ -58,6 +59,9 @@ userRouter
 // login, logout
 userRouter.route("/login").post(isActive, loginUser);
 userRouter.route("/logout").post(logoutUser);
+
+// analyze user answers
+userRouter.route("/:id/analyze-answers").get(isAuthorized, analyzeUserAnswers);
 
 // check session
 userRouter.route("/check-session/:id").get(isAuthorized, checkSession);

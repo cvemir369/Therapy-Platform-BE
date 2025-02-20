@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
-import { UserQuestion, TherapistQuestion } from "./models/index.js";
+import {
+  User,
+  UserAnswer,
+  UserQuestion,
+  TherapistQuestion,
+} from "./models/index.js";
+import { faker } from "@faker-js/faker";
 import "./db/index.js";
+
+const NUM_USERS = 10; // Number of fake users to create
 
 const userQuestions = [
   {
@@ -20,12 +28,12 @@ const userQuestions = [
     question: "What are the main challenges you are currently facing?",
     choices: [
       "Work or academic stress",
-      "Relationship issues (romantic, family, friendships)",
+      "Relationship issues",
       "Anxiety or panic attacks",
       "Depression or low mood",
-      " Trauma or past experiences",
+      "Trauma or past experiences",
       "Self-esteem and confidence",
-      "Life transitions (moving, job change, etc.)",
+      "Life transitions",
       "Other",
     ],
   },
@@ -76,66 +84,53 @@ const therapistQuestions = [
       "Other",
     ],
   },
-  {
-    question: "What therapy approaches do you use in your practice?",
-    choices: [
-      "Cognitive Behavioral Therapy (CBT)",
-      "Psychodynamic Therapy",
-      "Mindfulness-Based Therapy",
-      "Trauma-Informed Therapy",
-      "Dialectical Behavior Therapy (DBT)",
-      "Person-Centered Therapy",
-      "Existential or Humanistic Therapy",
-      "Other",
-    ],
-  },
-  {
-    question:
-      "How many years of professional experience do you have in therapy or counseling?",
-    choices: [
-      "Less than 1 year",
-      "1-3 years",
-      "4-7 years",
-      "8-10 years",
-      "More than 10 years",
-    ],
-  },
-  {
-    question: "What types of clients do you primarily work with?",
-    choices: [
-      "Children and adolescents",
-      "Young adults (18-30)",
-      "Adults (30-50)",
-      "Older adults (50+)",
-      "Couples",
-      "Families",
-      "LGBTQ+ individuals",
-      "Other",
-    ],
-  },
-  {
-    question: "Do you offer any additional services or specializations?",
-    choices: [
-      "Online therapy sessions",
-      "Group therapy",
-      "Crisis intervention",
-      "Meditation and mindfulness training",
-      "Career and life coaching",
-      "Cultural or faith-based counseling",
-      "Other",
-    ],
-  },
 ];
 
 const seedDatabase = async () => {
   try {
+    console.log("Clearing existing data...");
+    await User.deleteMany({});
+    await UserAnswer.deleteMany({});
     await UserQuestion.deleteMany({});
     await TherapistQuestion.deleteMany({});
 
-    await UserQuestion.insertMany(userQuestions);
+    console.log("Seeding questions...");
+    const insertedUserQuestions = await UserQuestion.insertMany(userQuestions);
     await TherapistQuestion.insertMany(therapistQuestions);
 
-    console.log("Database seeded successfully");
+    console.log("Seeding users...");
+    let users = [];
+    for (let i = 0; i < NUM_USERS; i++) {
+      users.push({
+        name: faker.person.fullName(),
+        phone: faker.phone.number("+49#########"),
+        email: faker.internet.email(),
+        username: faker.internet.userName(),
+        password: faker.internet.password(),
+        image: faker.image.avatar(),
+        isActive: true,
+      });
+    }
+    const insertedUsers = await User.insertMany(users);
+
+    console.log("Seeding user answers...");
+    let userAnswers = [];
+    insertedUsers.forEach((user) => {
+      insertedUserQuestions.forEach((question) => {
+        userAnswers.push({
+          user_id: user._id,
+          question_id: question._id,
+          answer: faker.helpers.arrayElements(question.choices, {
+            min: 1,
+            max: 3,
+          }),
+        });
+      });
+    });
+
+    await UserAnswer.insertMany(userAnswers);
+
+    console.log("Database seeded successfully!");
   } catch (error) {
     console.error("Error seeding database:", error);
   } finally {
