@@ -55,3 +55,9 @@ db.users.aggregate([
   },
 ]);
 ```
+
+### Run seed to populate the database
+
+```
+npm run seed
+```
