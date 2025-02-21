@@ -10,7 +10,7 @@ export const getUserAnswers = asyncHandler(async (req, res, next) => {
   })
     .populate({
       path: "question_id",
-      select: "question", // Select only the question field from the question document})
+      select: "question", // Select only the question field from the question document
     })
     .populate({
       path: "user_id",
@@ -40,7 +40,7 @@ export const createUserAnswer = asyncHandler(async (req, res, next) => {
     const populatedUserAnswer = await UserAnswer.findById(newUserAnswer._id)
       .populate({
         path: "question_id",
-        select: "question", // Select only the question field from the question document})
+        select: "question", // Select only the question field from the question document
       })
       .populate({
         path: "user_id",
@@ -82,7 +82,8 @@ export const analyzeUserAnswers = asyncHandler(async (req, res, next) => {
     // Create a new diagnosis if it doesn't exist
     diagnosis = new Diagnosis({
       user_id: req.params.id,
-      userAnswerAnalysis: analysis,
+      initialDiagnosis: analysis,
+      journalAnalysis: {}, // Initialize journalAnalysis as an empty object
     });
     await diagnosis.save();
   }

@@ -15,6 +15,7 @@ import {
 import {
   createTherapistAnswer,
   getTherapistAnswers,
+  getTherapistsWithAnswers,
 } from "../controllers/therapistAnswerController.js";
 
 const therapistRouter = Router();
@@ -24,6 +25,11 @@ therapistRouter
   .route("/")
   .get(isAuthorized, getTherapists)
   .post(createTherapist);
+
+// gets all the therapists with their answers
+therapistRouter
+  .route("/get-therapists-with-answers")
+  .get(getTherapistsWithAnswers);
 
 // get, update, delete therapist
 therapistRouter

@@ -10,6 +10,7 @@ import userQuestionRouter from "./routes/userQuestionRouter.js";
 import therapistQuestionRouter from "./routes/therapistQuestionRouter.js";
 import diagnosisRoutes from "./routes/diagnosisRouter.js";
 import messageRouter from "./routes/messageRouter.js";
+import matchingRouter from "./routes/matchingRouter.js";
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/user-questions", userQuestionRouter);
 app.use("/therapist-questions", therapistQuestionRouter);
 app.use("/diagnosis", diagnosisRoutes);
 app.use("/messages", messageRouter);
+app.use("/matching", matchingRouter);
 
 app.use("*", (req, res) => res.status(404).json({ message: "Page not found" }));
 app.use(errorHandler);
