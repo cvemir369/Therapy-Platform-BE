@@ -1,8 +1,18 @@
 import OpenAI from "openai";
-import { OPENAI_API_KEY } from "../config/config.js";
+import {
+  OPENAI_API_KEY,
+  GITHUB_TOKEN,
+  AZURE_ENDPOINT,
+  MODEL_NAME,
+} from "../config/config.js";
+
+const endpoint = AZURE_ENDPOINT; // used with GITHUB_TOKEN
+const modelName = MODEL_NAME;
+const key = GITHUB_TOKEN || OPENAI_API_KEY; // Use GITHUB_TOKEN if available, otherwise use OPENAI_API_KEY
 
 const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
+  baseURL: endpoint, // used with GITHUB_TOKEN, comment the line out if you want to use OPENAI_API_KEY
+  apiKey: key,
 });
 
 export const analyzeResponse = async (jsonResponse) => {
@@ -24,15 +34,19 @@ export const analyzeResponse = async (jsonResponse) => {
   }`;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: modelName,
     messages: [{ role: "user", content: prompt }],
     max_tokens: 200,
   });
 
   // Extract and parse the JSON response
-  const textResponse = response.choices[0].message.content.trim();
+  let textResponse = response.choices[0].message.content.trim();
   try {
-    return JSON.parse(textResponse);
+    // Remove surrounding triple backticks if present
+    if (textResponse.startsWith("```json") && textResponse.endsWith("```")) {
+      textResponse = textResponse.slice(7, -3).trim();
+    }
+    return textResponse ? JSON.parse(textResponse) : {};
   } catch (error) {
     console.error("Failed to parse OpenAI response as JSON:", textResponse);
     return { error: "Invalid JSON response from OpenAI" };
