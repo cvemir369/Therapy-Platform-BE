@@ -29,7 +29,9 @@ export const createUser = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse("Please provide all required fields", 400));
     }
 
-    if (await User.findOne({ email })) {
+    const lowerCaseEmail = email.toLowerCase();
+
+    if (await User.findOne({ email: lowerCaseEmail })) {
       return next(new ErrorResponse("Email is already taken", 400));
     }
 
@@ -42,7 +44,7 @@ export const createUser = asyncHandler(async (req, res, next) => {
     const newUser = new User({
       name,
       phone,
-      email,
+      email: lowerCaseEmail,
       username,
       password: hashedPassword,
       image,
@@ -50,9 +52,7 @@ export const createUser = asyncHandler(async (req, res, next) => {
     await newUser.save();
 
     // Login user automatically after registration
-    const user = await User.findOne({
-      email: newUser.email,
-    });
+    const user = await User.findOne({ email: lowerCaseEmail });
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "24h" });
     res.cookie("token", token, {
       httpOnly: true,
@@ -77,8 +77,12 @@ export const updateUser = asyncHandler(async (req, res, next) => {
   }
 
   const { email, username, password } = req.body;
-  if (email && (await User.findOne({ email }))) {
-    return next(new ErrorResponse("Email is already taken", 400));
+  if (email) {
+    const lowerCaseEmail = email.toLowerCase();
+    if (await User.findOne({ email: lowerCaseEmail })) {
+      return next(new ErrorResponse("Email is already taken", 400));
+    }
+    req.body.email = lowerCaseEmail;
   }
 
   if (username && (await User.findOne({ username }))) {
@@ -117,7 +121,8 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
 // Login user
 export const loginUser = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const lowerCaseEmail = email.toLowerCase();
+  const user = await User.findOne({ email: lowerCaseEmail });
   if (!user) {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
@@ -148,7 +153,7 @@ export const logoutUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "User logged out successfully" });
 });
 
-// // Check Session
+// Check Session
 export const checkSession = (req, res) => {
   if (req.user) {
     res.json({ authenticated: true, user: req.user });

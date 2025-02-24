@@ -162,7 +162,7 @@ const seedDatabase = async () => {
       users.push({
         name: faker.person.fullName(),
         phone: faker.phone.number("+49#########"),
-        email: faker.internet.email(),
+        email: faker.internet.email().toLowerCase(),
         username: faker.internet.userName(),
         password: faker.internet.password(),
         image: faker.image.avatar(),
@@ -177,7 +177,7 @@ const seedDatabase = async () => {
       therapists.push({
         name: faker.person.fullName(),
         phone: faker.phone.number("+49#########"),
-        email: faker.internet.email(),
+        email: faker.internet.email().toLowerCase(),
         username: faker.internet.userName(),
         password: faker.internet.password(),
         image: faker.image.avatar(),

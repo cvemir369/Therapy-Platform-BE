@@ -29,7 +29,9 @@ export const createTherapist = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse("Please provide all required fields", 400));
     }
 
-    if (await Therapist.findOne({ email })) {
+    const lowerCaseEmail = email.toLowerCase();
+
+    if (await Therapist.findOne({ email: lowerCaseEmail })) {
       return next(new ErrorResponse("Email is already taken", 400));
     }
 
@@ -42,7 +44,7 @@ export const createTherapist = asyncHandler(async (req, res, next) => {
     const newTherapist = new Therapist({
       name,
       phone,
-      email,
+      email: lowerCaseEmail,
       username,
       password: hashedPassword,
       image,
@@ -50,9 +52,7 @@ export const createTherapist = asyncHandler(async (req, res, next) => {
     await newTherapist.save();
 
     // Login therapist automatically after registration
-    const therapist = await Therapist.findOne({
-      email: newTherapist.email,
-    });
+    const therapist = await Therapist.findOne({ email: lowerCaseEmail });
     const token = jwt.sign({ id: therapist._id }, JWT_SECRET, {
       expiresIn: "24h",
     });
@@ -79,8 +79,12 @@ export const updateTherapist = asyncHandler(async (req, res, next) => {
   }
 
   const { email, username, password } = req.body;
-  if (email && (await Therapist.findOne({ email }))) {
-    return next(new ErrorResponse("Email is already taken", 400));
+  if (email) {
+    const lowerCaseEmail = email.toLowerCase();
+    if (await Therapist.findOne({ email: lowerCaseEmail })) {
+      return next(new ErrorResponse("Email is already taken", 400));
+    }
+    req.body.email = lowerCaseEmail;
   }
 
   if (username && (await Therapist.findOne({ username }))) {
@@ -123,7 +127,8 @@ export const deleteTherapist = asyncHandler(async (req, res, next) => {
 // Login therapist
 export const loginTherapist = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
-  const therapist = await Therapist.findOne({ email });
+  const lowerCaseEmail = email.toLowerCase();
+  const therapist = await Therapist.findOne({ email: lowerCaseEmail });
   if (!therapist) {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
@@ -156,7 +161,7 @@ export const logoutTherapist = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Therapist logged out successfully" });
 });
 
-// // Check Session
+// Check Session
 export const checkSession = (req, res) => {
   if (req.user) {
     res.json({ authenticated: true, user: req.user });
