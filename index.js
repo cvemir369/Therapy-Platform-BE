@@ -17,7 +17,8 @@ import { Server } from "socket.io"; // Import Socket.IO
 import { Message } from "./models/index.js"; // Import Message Model
 
 import matchingRouter from "./routes/matchingRouter.js";
-
+// ChatBot
+import chatBotRouter from "./routes/chatBotRouter.js";
 
 const app = express();
 const server = http.createServer(app); // Create an HTTP server
@@ -45,7 +46,8 @@ app.use("/user-questions", userQuestionRouter);
 app.use("/therapist-questions", therapistQuestionRouter);
 app.use("/diagnosis", diagnosisRoutes);
 app.use("/messages", messageRouter);
-
+// ChatBot
+app.use("/chatBot", chatBotRouter);
 // WebSocket Logic
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
