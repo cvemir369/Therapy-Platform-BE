@@ -4,7 +4,7 @@ import { User, Therapist } from "../models/index.js";
 // Middleware to check if account is active / soft deleted
 const isActive = async (req, res, next) => {
   try {
-    const email = req.body.email;
+    const email = req.body.email.toLowerCase();
     const user = await User.findOne({ email });
     const therapist = await Therapist.findOne({ email });
 
