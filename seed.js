@@ -3,12 +3,15 @@ import {
   User,
   UserAnswer,
   UserQuestion,
+  Therapist,
+  TherapistAnswer,
   TherapistQuestion,
 } from "./models/index.js";
 import { faker } from "@faker-js/faker";
 import "./db/index.js";
 
-const NUM_USERS = 10; // Number of fake users to create
+const NUM_USERS = 15; // Number of fake users to create
+const NUM_THERAPISTS = 10; // Number of fake therapists to create
 
 const userQuestions = [
   {
@@ -71,7 +74,7 @@ const userQuestions = [
 
 const therapistQuestions = [
   {
-    question: "What are your areas of specialization?",
+    question: "What are your areas of specialization? (Select all that apply)",
     choices: [
       "Anxiety and stress management",
       "Depression and mood disorders",
@@ -81,7 +84,58 @@ const therapistQuestions = [
       "Self-esteem and personal growth",
       "Addiction and substance abuse",
       "Workplace or career-related stress",
-      "Other",
+      "Other (please specify)",
+    ],
+  },
+  {
+    question:
+      "What therapy approaches do you use in your practice? (Select all that apply)",
+    choices: [
+      "Cognitive Behavioral Therapy (CBT)",
+      "Psychodynamic Therapy",
+      "Mindfulness-Based Therapy",
+      "Trauma-Informed Therapy",
+      "Dialectical Behavior Therapy (DBT)",
+      "Person-Centered Therapy",
+      "Existential or Humanistic Therapy",
+      "Other (please specify)",
+    ],
+  },
+  {
+    question:
+      "How many years of professional experience do you have in therapy or counseling?",
+    choices: [
+      "Less than 1 year",
+      "1-3 years",
+      "4-7 years",
+      "8-10 years",
+      "More than 10 years",
+    ],
+  },
+  {
+    question:
+      "What types of clients do you primarily work with? (Select all that apply)",
+    choices: [
+      "Children and adolescents",
+      "Young adults (18-30)",
+      "Adults (30-50)",
+      "Older adults (50+)",
+      "Couples",
+      "Families",
+      "LGBTQ+ individuals",
+      "Other (please specify)",
+    ],
+  },
+  {
+    question: "Do you offer any additional services or specializations?",
+    choices: [
+      "Online therapy sessions",
+      "Group therapy",
+      "Crisis intervention",
+      "Meditation and mindfulness training",
+      "Career and life coaching",
+      "Cultural or faith-based counseling",
+      "Other (please specify)",
     ],
   },
 ];
@@ -92,11 +146,15 @@ const seedDatabase = async () => {
     await User.deleteMany({});
     await UserAnswer.deleteMany({});
     await UserQuestion.deleteMany({});
+    await Therapist.deleteMany({});
+    await TherapistAnswer.deleteMany({});
     await TherapistQuestion.deleteMany({});
 
     console.log("Seeding questions...");
     const insertedUserQuestions = await UserQuestion.insertMany(userQuestions);
-    await TherapistQuestion.insertMany(therapistQuestions);
+    const insertedTherapistQuestions = await TherapistQuestion.insertMany(
+      therapistQuestions
+    );
 
     console.log("Seeding users...");
     let users = [];
@@ -113,6 +171,21 @@ const seedDatabase = async () => {
     }
     const insertedUsers = await User.insertMany(users);
 
+    console.log("Seeding therapists...");
+    let therapists = [];
+    for (let i = 0; i < NUM_THERAPISTS; i++) {
+      therapists.push({
+        name: faker.person.fullName(),
+        phone: faker.phone.number("+49#########"),
+        email: faker.internet.email(),
+        username: faker.internet.userName(),
+        password: faker.internet.password(),
+        image: faker.image.avatar(),
+        isActive: true,
+      });
+    }
+    const insertedTherapists = await Therapist.insertMany(therapists);
+
     console.log("Seeding user answers...");
     let userAnswers = [];
     insertedUsers.forEach((user) => {
@@ -127,8 +200,23 @@ const seedDatabase = async () => {
         });
       });
     });
-
     await UserAnswer.insertMany(userAnswers);
+
+    console.log("Seeding therapist answers...");
+    let therapistAnswers = [];
+    insertedTherapists.forEach((therapist) => {
+      insertedTherapistQuestions.forEach((question) => {
+        therapistAnswers.push({
+          therapist_id: therapist._id,
+          question_id: question._id,
+          answer: faker.helpers.arrayElements(question.choices, {
+            min: 1,
+            max: 3,
+          }),
+        });
+      });
+    });
+    await TherapistAnswer.insertMany(therapistAnswers);
 
     console.log("Database seeded successfully!");
   } catch (error) {

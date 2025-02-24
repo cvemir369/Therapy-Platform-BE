@@ -24,6 +24,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
-    "openai": "^4.85.2"
+    "openai": "^4.85.3",
+    "socket.io": "^4.8.1"
   }
 }
