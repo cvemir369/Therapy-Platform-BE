@@ -1,4 +1,8 @@
-import { TherapistAnswer } from "../models/index.js";
+import {
+  TherapistAnswer,
+  Therapist,
+  TherapistQuestion,
+} from "../models/index.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 
@@ -53,3 +57,51 @@ export const createTherapistAnswer = asyncHandler(async (req, res, next) => {
     next(error);
   }
 });
+
+export const getTherapistsWithAnswers = async (req, res) => {
+  try {
+    const therapists = await Therapist.aggregate([
+      {
+        $lookup: {
+          from: "therapistanswers",
+          localField: "_id",
+          foreignField: "therapist_id",
+          as: "answers",
+        },
+      },
+      {
+        $unwind: { path: "$answers", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $lookup: {
+          from: "therapistquestions",
+          localField: "answers.question_id",
+          foreignField: "_id",
+          as: "answers.questionDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$answers.questionDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          answers: {
+            $push: {
+              question: "$answers.questionDetails.question",
+              answer: "$answers.answer",
+            },
+          },
+        },
+      },
+    ]);
+
+    res.status(200).json(therapists);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

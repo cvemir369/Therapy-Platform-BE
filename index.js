@@ -11,10 +11,13 @@ import userQuestionRouter from "./routes/userQuestionRouter.js";
 import therapistQuestionRouter from "./routes/therapistQuestionRouter.js";
 import diagnosisRoutes from "./routes/diagnosisRouter.js";
 import messageRouter from "./routes/messageRouter.js";
-//new imports websocket
+
 import http from "http"; // Import HTTP for WebSockets
 import { Server } from "socket.io"; // Import Socket.IO
 import { Message } from "./models/index.js"; // Import Message Model
+
+import matchingRouter from "./routes/matchingRouter.js";
+
 
 const app = express();
 const server = http.createServer(app); // Create an HTTP server
@@ -42,6 +45,7 @@ app.use("/user-questions", userQuestionRouter);
 app.use("/therapist-questions", therapistQuestionRouter);
 app.use("/diagnosis", diagnosisRoutes);
 app.use("/messages", messageRouter);
+
 // WebSocket Logic
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
@@ -75,6 +79,8 @@ io.on("connection", (socket) => {
     console.log("User disconnected");
   });
 });
+
+app.use("/matching", matchingRouter);
 
 app.use("*", (req, res) => res.status(404).json({ message: "Page not found" }));
 app.use(errorHandler);
