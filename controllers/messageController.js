@@ -49,3 +49,15 @@ export const markAsRead = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Failed to mark message as read", 500));
   }
 });
+
+// Get users who have sent messages to the current user
+export const getChatters = asyncHandler(async (req, res, next) => {
+  const { to, toModel } = req.query;
+  try {
+    const chatters = await Message.find({ to, toModel }).distinct("from");
+    const formattedChatters = chatters.map((chatter) => ({ _id: chatter }));
+    res.status(200).json(formattedChatters);
+  } catch (error) {
+    return next(new ErrorResponse("Failed to get chatters", 500));
+  }
+});
