@@ -40,11 +40,7 @@ const userQuestions = [
       "Other",
     ],
   },
-  {
-    question:
-      "How often do you experience distressing thoughts or emotions that interfere with your daily life?",
-    choices: ["Rarely", "Occasionally", "Frequently", "Almost all the time"],
-  },
+
   {
     question: "Do you have a preference for the type of therapy or therapist?",
     choices: [
@@ -69,6 +65,11 @@ const userQuestions = [
       "Coping with depression",
       "Other",
     ],
+  },
+  {
+    question:
+      "How often do you experience distressing thoughts or emotions that interfere with your daily life?",
+    choices: ["Rarely", "Occasionally", "Frequently", "Almost all the time"],
   },
 ];
 
@@ -101,17 +102,7 @@ const therapistQuestions = [
       "Other (please specify)",
     ],
   },
-  {
-    question:
-      "How many years of professional experience do you have in therapy or counseling?",
-    choices: [
-      "Less than 1 year",
-      "1-3 years",
-      "4-7 years",
-      "8-10 years",
-      "More than 10 years",
-    ],
-  },
+
   {
     question:
       "What types of clients do you primarily work with? (Select all that apply)",
@@ -136,6 +127,17 @@ const therapistQuestions = [
       "Career and life coaching",
       "Cultural or faith-based counseling",
       "Other (please specify)",
+    ],
+  },
+  {
+    question:
+      "How many years of professional experience do you have in therapy or counseling?",
+    choices: [
+      "Less than 1 year",
+      "1-3 years",
+      "4-7 years",
+      "8-10 years",
+      "More than 10 years",
     ],
   },
 ];
