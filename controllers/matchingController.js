@@ -113,12 +113,6 @@ export const matchUserWithTherapists = async (req, res) => {
       })),
     };
 
-    // Log the JSON before sending to OpenAI to check for errors
-    console.log(
-      "Structured Prompt (before OpenAI request):",
-      JSON.stringify(structuredPrompt, null, 2)
-    );
-
     const response = await openai.chat.completions.create({
       model: "gpt-4-turbo",
       messages: [
@@ -138,7 +132,29 @@ export const matchUserWithTherapists = async (req, res) => {
 
     // Parse the returned JSON string into an object
     const parsedResponse = JSON.parse(response.choices[0].message.content);
-    res.status(200).json(parsedResponse);
+    // Assume parsedResponse is like:
+    // [ { id: 'therapistId1', matchPercentage: 85 }, { id: 'therapistId2', matchPercentage: 70 }, ... ]
+
+    console.log(parsedResponse);
+
+    // Get all matching therapist IDs from the AI response
+    const matchingIds = parsedResponse.matches.map((item) => item.therapist_id);
+
+    const matchingTherapists = await Therapist.find({
+      _id: { $in: matchingIds },
+    });
+
+    const finalResults = matchingTherapists.map((therapist) => {
+      const matchData = parsedResponse.matches.find(
+        (item) => item.therapist_id === therapist._id.toString()
+      );
+      return {
+        ...therapist.toObject(),
+        matchPercentage: matchData ? matchData.match_percentage : 0,
+      };
+    });
+
+    res.status(200).json(finalResults);
     console.log("Token usage:", response.usage);
   } catch (error) {
     console.error("Error:", error);
