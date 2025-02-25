@@ -1,9 +1,19 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ChatBot from "../models/chatBot.js";
-import { OPENAI_API_KEY, MODEL_NAME } from "../config/config.js";
+import {
+  GITHUB_TOKEN,
+  OPENAI_API_KEY,
+  MODEL_NAME,
+  AZURE_ENDPOINT,
+} from "../config/config.js";
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+const endpoint = AZURE_ENDPOINT; // used with GITHUB_TOKEN
+const key = GITHUB_TOKEN || OPENAI_API_KEY; // Use GITHUB_TOKEN if available, otherwise use OPENAI_API_KEY
+const openai = new OpenAI({
+  baseURL: endpoint, // used with GITHUB_TOKEN, comment the line out if you want to use OPENAI_API_KEY
+  apiKey: key,
+});
 
 // Pre-made questions & answers
 const preMadeQA = [
