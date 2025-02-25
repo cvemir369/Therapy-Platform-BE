@@ -3,8 +3,19 @@ import Diagnosis from "../models/Diagnosis.js";
 import Therapist from "../models/Therapist.js";
 import TherapistAnswer from "../models/TherapistAnswer.js";
 import TherapistQuestion from "../models/TherapistQuestion.js";
+import {
+  GITHUB_TOKEN,
+  OPENAI_API_KEY,
+  MODEL_NAME,
+  AZURE_ENDPOINT,
+} from "../config/config.js";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const endpoint = AZURE_ENDPOINT; // used with GITHUB_TOKEN
+const key = GITHUB_TOKEN || OPENAI_API_KEY; // Use GITHUB_TOKEN if available, otherwise use OPENAI_API_KEY
+const openai = new OpenAI({
+  baseURL: endpoint, // used with GITHUB_TOKEN, comment the line out if you want to use OPENAI_API_KEY
+  apiKey: key,
+});
 
 /**
  * Fetches the user's diagnosis from the database.
@@ -114,7 +125,7 @@ export const matchUserWithTherapists = async (req, res) => {
     };
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: MODEL_NAME || "gpt-4-turbo",
       messages: [
         {
           role: "system",
