@@ -105,3 +105,36 @@ export const getTherapistsWithAnswers = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+// Update an existing therapist answer
+export const updateTherapistAnswer = asyncHandler(async (req, res, next) => {
+  const { answerId } = req.params;
+  const { answer } = req.body;
+
+  if (!answer) {
+    return next(new ErrorResponse("Answer field is required", 400));
+  }
+
+  // Update the therapist answer and return the new document
+  const updatedTherapistAnswer = await TherapistAnswer.findByIdAndUpdate(
+    answerId,
+    { answer },
+    { new: true }
+  );
+
+  if (!updatedTherapistAnswer) {
+    return next(new ErrorResponse("Therapist answer not found", 404));
+  }
+
+  // Populate the question_id and therapist_id fields
+  const populatedTherapistAnswer = await TherapistAnswer.findById(updatedTherapistAnswer._id)
+    .populate({
+      path: "question_id",
+      select: "question",
+    })
+    .populate({
+      path: "therapist_id",
+      select: "name",
+    });
+
+  res.status(200).json(populatedTherapistAnswer);
+});

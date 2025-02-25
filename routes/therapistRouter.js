@@ -16,6 +16,7 @@ import {
   createTherapistAnswer,
   getTherapistAnswers,
   getTherapistsWithAnswers,
+  updateTherapistAnswer,
 } from "../controllers/therapistAnswerController.js";
 
 const therapistRouter = Router();
@@ -43,7 +44,10 @@ therapistRouter
   .route("/:id/therapist-answers")
   .get(isAuthorized, getTherapistAnswers)
   .post(isAuthorized, createTherapistAnswer);
-
+// New route for updating therapist answer
+therapistRouter
+  .route("/:id/therapist-answers/:answerId")
+  .put(isAuthorized, updateTherapistAnswer);
 // login, logout
 therapistRouter.route("/login").post(isActive, loginTherapist);
 therapistRouter.route("/logout").post(logoutTherapist);
