@@ -11,6 +11,7 @@ import userQuestionRouter from "./routes/userQuestionRouter.js";
 import therapistQuestionRouter from "./routes/therapistQuestionRouter.js";
 import diagnosisRoutes from "./routes/diagnosisRouter.js";
 import messageRouter from "./routes/messageRouter.js";
+import adviceRouter from "./routes/adviceRouter.js";
 
 import http from "http"; // Import HTTP for WebSockets
 import { Server } from "socket.io"; // Import Socket.IO
@@ -46,6 +47,7 @@ app.use("/user-questions", userQuestionRouter);
 app.use("/therapist-questions", therapistQuestionRouter);
 app.use("/diagnosis", diagnosisRoutes);
 app.use("/messages", messageRouter);
+app.use("/advice", adviceRouter);
 // ChatBot
 app.use("/chatBot", chatBotRouter);
 // WebSocket Logic

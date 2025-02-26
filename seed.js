@@ -10,8 +10,8 @@ import {
 import { faker } from "@faker-js/faker";
 import "./db/index.js";
 
-const NUM_USERS = 15; // Number of fake users to create
-const NUM_THERAPISTS = 10; // Number of fake therapists to create
+const NUM_USERS = 2; // Number of fake users to create
+const NUM_THERAPISTS = 5; // Number of fake therapists to create
 
 const userQuestions = [
   {

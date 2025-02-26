@@ -146,8 +146,6 @@ export const matchUserWithTherapists = async (req, res) => {
     // Assume parsedResponse is like:
     // [ { id: 'therapistId1', matchPercentage: 85 }, { id: 'therapistId2', matchPercentage: 70 }, ... ]
 
-    console.log(parsedResponse);
-
     // Get all matching therapist IDs from the AI response
     const matchingIds = parsedResponse.matches.map((item) => item.therapist_id);
 
@@ -155,9 +153,19 @@ export const matchUserWithTherapists = async (req, res) => {
       _id: { $in: matchingIds },
     });
 
+    // const finalResults = matchingTherapists.map((therapist) => {
+    //   const matchData = parsedResponse.matches.find(
+    //     (item) => item.therapist_id === therapist._id.toString()
+    //   );
+    //   return {
+    //     ...therapist.toObject(),
+    //     matchPercentage: matchData ? matchData.match_percentage : 0,
+    //   };
+    // });
+
     const finalResults = matchingTherapists.map((therapist) => {
       const matchData = parsedResponse.matches.find(
-        (item) => item.therapist_id === therapist._id.toString()
+        (item) => item.therapist_id.toString() === therapist._id.toString() // Ensure both are strings
       );
       return {
         ...therapist.toObject(),
@@ -166,6 +174,7 @@ export const matchUserWithTherapists = async (req, res) => {
     });
 
     res.status(200).json(finalResults);
+    console.log(finalResults);
     console.log("Token usage:", response.usage);
   } catch (error) {
     console.error("Error:", error);
