@@ -53,7 +53,9 @@ export const createUser = asyncHandler(async (req, res, next) => {
 
     // Login user automatically after registration
     const user = await User.findOne({ email: lowerCaseEmail });
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "24h" });
+    const token = jwt.sign({ id: user._id, role: "user" }, JWT_SECRET, {
+      expiresIn: "24h",
+    });
     res.cookie("token", token, {
       httpOnly: true,
       secure: NODE_ENV === "production",
@@ -130,7 +132,9 @@ export const loginUser = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
-  const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "24h" });
+  const token = jwt.sign({ id: user._id, role: "user" }, JWT_SECRET, {
+    expiresIn: "24h",
+  });
   res.cookie("token", token, {
     httpOnly: true,
     secure: NODE_ENV === "production",
