@@ -7,7 +7,7 @@ import { JWT_SECRET } from "../config/config.js";
 const isAuthorized = asyncHandler(async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
-    return next(new ErrorResponse("Not authorized to access this route", 401));
+    next();
   }
 
   try {
