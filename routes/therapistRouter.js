@@ -49,7 +49,7 @@ therapistRouter
 // get all therapist answers, create therapist answer
 therapistRouter
   .route("/:id/therapist-answers")
-  .get(isAuthorized, isOwner, getTherapistAnswers)
+  .get(isAuthorized, getTherapistAnswers)
   .post(isAuthorized, createTherapistAnswer);
 therapistRouter
   .route("/:id/therapist-answers/:answerId")
