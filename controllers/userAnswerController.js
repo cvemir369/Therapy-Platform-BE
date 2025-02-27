@@ -1,7 +1,7 @@
 import { UserAnswer, Diagnosis } from "../models/index.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
-import analyzeResponse from "../utils/openAi.js";
+import { analyzeResponse } from "../utils/openAi.js";
 
 // Get all userAnswers with related questions by user_id
 export const getUserAnswers = asyncHandler(async (req, res, next) => {
