@@ -85,7 +85,7 @@ const therapistQuestions = [
       "Self-esteem and personal growth",
       "Addiction and substance abuse",
       "Workplace or career-related stress",
-      "Other (please specify)",
+      "Other",
     ],
   },
   {
@@ -99,7 +99,7 @@ const therapistQuestions = [
       "Dialectical Behavior Therapy (DBT)",
       "Person-Centered Therapy",
       "Existential or Humanistic Therapy",
-      "Other (please specify)",
+      "Other",
     ],
   },
 
@@ -114,7 +114,7 @@ const therapistQuestions = [
       "Couples",
       "Families",
       "LGBTQ+ individuals",
-      "Other (please specify)",
+      "Other",
     ],
   },
   {
@@ -126,7 +126,7 @@ const therapistQuestions = [
       "Meditation and mindfulness training",
       "Career and life coaching",
       "Cultural or faith-based counseling",
-      "Other (please specify)",
+      "Other",
     ],
   },
   {
@@ -213,7 +213,11 @@ const seedDatabase = async () => {
           question_id: question._id,
           answer: faker.helpers.arrayElements(question.choices, {
             min: 1,
-            max: 3,
+            max:
+              question.question ===
+              "How many years of professional experience do you have in therapy or counseling?"
+                ? 1
+                : 3,
           }),
         });
       });
