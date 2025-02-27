@@ -21,6 +21,13 @@ import {
 
 const therapistRouter = Router();
 
+// check session
+therapistRouter.route("/check-session").get(isAuthorized, checkSession);
+
+// login, logout
+therapistRouter.route("/login").post(isActive, loginTherapist);
+therapistRouter.route("/logout").post(logoutTherapist);
+
 // get all therapists, create therapist
 therapistRouter
   .route("/")
@@ -44,15 +51,8 @@ therapistRouter
   .route("/:id/therapist-answers")
   .get(isAuthorized, getTherapistAnswers)
   .post(isAuthorized, createTherapistAnswer);
-// New route for updating therapist answer
 therapistRouter
   .route("/:id/therapist-answers/:answerId")
-  .put(isAuthorized, updateTherapistAnswer);
-// login, logout
-therapistRouter.route("/login").post(isActive, loginTherapist);
-therapistRouter.route("/logout").post(logoutTherapist);
-
-// check session
-therapistRouter.route("/check-session/:id").get(isAuthorized, checkSession);
+  .put(isAuthorized, isOwner, updateTherapistAnswer);
 
 export default therapistRouter;

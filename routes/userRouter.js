@@ -27,6 +27,13 @@ import {
 
 const userRouter = Router();
 
+// check session
+userRouter.route("/check-session").get(isAuthorized, checkSession);
+
+// login, logout
+userRouter.route("/login").post(isActive, loginUser);
+userRouter.route("/logout").post(logoutUser);
+
 // get all users, create user
 userRouter.route("/").get(isAuthorized, getUsers).post(createUser);
 
@@ -56,14 +63,10 @@ userRouter
   .put(isAuthorized, isOwner, updateJournal)
   .delete(isAuthorized, isOwner, deleteJournal);
 
-// login, logout
-userRouter.route("/login").post(isActive, loginUser);
-userRouter.route("/logout").post(logoutUser);
-
 // analyze user answers
 userRouter.route("/:id/analyze-answers").get(isAuthorized, analyzeUserAnswers);
 
-// check session
-userRouter.route("/check-session/:id").get(isAuthorized, checkSession);
+// // check session
+// userRouter.route("/check-session").get(isAuthorized, checkSession);
 
 export default userRouter;

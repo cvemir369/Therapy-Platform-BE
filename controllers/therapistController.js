@@ -53,9 +53,13 @@ export const createTherapist = asyncHandler(async (req, res, next) => {
 
     // Login therapist automatically after registration
     const therapist = await Therapist.findOne({ email: lowerCaseEmail });
-    const token = jwt.sign({ id: therapist._id }, JWT_SECRET, {
-      expiresIn: "24h",
-    });
+    const token = jwt.sign(
+      { id: therapist._id, role: "therapist" },
+      JWT_SECRET,
+      {
+        expiresIn: "24h",
+      }
+    );
     res.cookie("token", token, {
       httpOnly: true,
       secure: NODE_ENV === "production",
@@ -136,7 +140,7 @@ export const loginTherapist = asyncHandler(async (req, res, next) => {
   if (!isMatch) {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
-  const token = jwt.sign({ id: therapist._id }, JWT_SECRET, {
+  const token = jwt.sign({ id: therapist._id, role: "therapist" }, JWT_SECRET, {
     expiresIn: "24h",
   });
   res.cookie("token", token, {
