@@ -1,33 +1,72 @@
 import { Router } from "express";
-import isUserVerified from "../middlewares/isUserVerified.js";
-import isUserAuthorized from "../middlewares/isUserAuthorized.js";
-import isUserOwner from "../middlewares/isUserOwner.js";
+import isActive from "../middlewares/isActive.js";
+import isAuthorized from "../middlewares/isAuthorized.js";
+import isOwner from "../middlewares/isOwner.js";
 import {
   createUser,
   getUsers,
   getUser,
+  updateUser,
+  deleteUser,
   loginUser,
   logoutUser,
   checkSession,
 } from "../controllers/userController.js";
+import {
+  createUserAnswer,
+  getUserAnswers,
+  analyzeUserAnswers,
+} from "../controllers/userAnswerController.js";
+import {
+  createJournal,
+  getJournals,
+  getJournal,
+  updateJournal,
+  deleteJournal,
+} from "../controllers/journalController.js";
 
 const userRouter = Router();
 
-// get all users, create user
-userRouter.route("/").get(isUserAuthorized, getUsers).post(createUser);
+// check session
+userRouter.route("/check-session").get(isAuthorized, checkSession);
 
-// get, update, delete user, set user image
-userRouter.route("/:id").get(isUserAuthorized, getUser);
-//   .put(isUserAuthorized, isUserOwner, updateUser)
-//   .delete(isUserAuthorized, isUserOwner, deleteUser)
-//   .patch(isUserAuthorized, isUserOwner, setUserImage);
-
-// verify user, login, logout
-// userRouter.route("/verify/:verificationToken").post(verifyUser);
-userRouter.route("/login").post(loginUser);
+// login, logout
+userRouter.route("/login").post(isActive, loginUser);
 userRouter.route("/logout").post(logoutUser);
 
-// check session
-userRouter.get("/check-session/:id", isUserAuthorized, checkSession);
+// get all users, create user
+userRouter.route("/").get(isAuthorized, getUsers).post(createUser);
+
+// get, update, delete user
+userRouter
+  .route("/:id")
+  .get(isAuthorized, getUser)
+  .put(isAuthorized, isOwner, updateUser)
+  .delete(isAuthorized, isOwner, deleteUser);
+
+// get all user answers, create user answer
+userRouter
+  .route("/:id/user-answers")
+  .get(isAuthorized, getUserAnswers)
+  .post(isAuthorized, createUserAnswer);
+
+// get all journals, create journal
+userRouter
+  .route("/:id/journals")
+  .get(isAuthorized, getJournals)
+  .post(isAuthorized, createJournal);
+
+// get, update, delete journal
+userRouter
+  .route("/:id/journals/:journalId")
+  .get(isAuthorized, getJournal)
+  .put(isAuthorized, isOwner, updateJournal)
+  .delete(isAuthorized, isOwner, deleteJournal);
+
+// analyze user answers
+userRouter.route("/:id/analyze-answers").get(isAuthorized, analyzeUserAnswers);
+
+// // check session
+// userRouter.route("/check-session").get(isAuthorized, checkSession);
 
 export default userRouter;
