@@ -75,9 +75,9 @@ export const generateAdvice = async (diagnosis, journalAnalysis, res) => {
     A user is experiencing the following emotions: ${emotions}.
     They have been diagnosed with: ${conditions}.
     Recommended therapies include: ${specialties}.
-    
+
     Please generate a **fully structured HTML response**. Follow these strict guidelines:
-    
+
     1. **Do NOT escape HTML characters** (e.g., use <h2> instead of &lt;h2&gt;).
     2. **Only use these HTML elements**:
        - <h2> for section headings
@@ -86,17 +86,17 @@ export const generateAdvice = async (diagnosis, journalAnalysis, res) => {
        - <strong> for emphasizing important text
     3. **Your response should only contain HTML**—no plain text, no markdown, no explanations.
     4. **Ensure all tags are correctly opened and closed.**
-    
+
     ### **Example Response Format:**
     <h2><strong>Understanding Your Emotions:</strong></h2>
     <p>Experiencing emotions like anxiety, stress, or depression can be challenging. Recognizing these feelings is an important first step.</p>
-    
+
     <h2><strong>Your Diagnoses:</strong></h2>
     <p>You have been diagnosed with the following:</p>
     <ul>
       <li> - Anxiety</li>
       <li> - Depression</li>
-    </ul> 
+    </ul>
     <p>Addressing each of these can help you regain a sense of control over your emotions.</p>
 
     <h2>Recommended Therapies:</h2>
@@ -104,24 +104,22 @@ export const generateAdvice = async (diagnosis, journalAnalysis, res) => {
       <li><strong>Cognitive Behavioral Therapy (CBT):</strong> Helps manage negative thought patterns.</li>
       <li><strong>Mindfulness Therapy:</strong> Improves focus and reduces stress.</li>
     </ul>
-    
+
     <h2><strong>Steps You Can Take:</strong></h2>
     <p>Here are some actionable steps to improve well-being:</p>
     <ul>
       <li>Practice daily meditation.</li>
       <li>Engage in regular physical activity.</li>
     </ul>
-    
+
     <h2><strong>Conclusion:</strong></h2>
     <p>Seeking help is a sign of strength. Small steps lead to big improvements.</p>
-    
+
     ### **Only return valid HTML—nothing else.**
     `;
 
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
   const stream = await openai.chat.completions.create({
-    model: "gpt-4-turbo",
+    model: modelName || "gpt-4-turbo",
     messages: [{ role: "system", content: prompt }],
     stream: true, // Enable streaming
   });
