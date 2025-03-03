@@ -1,13 +1,18 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import OpenAI from "openai";
-import { MODEL_NAME, OPENAI_API_KEY } from "../config/config.js";
+import {
+  MODEL_NAME,
+  OPENAI_API_KEY,
+  GITHUB_TOKEN,
+  AZURE_ENDPOINT,
+} from "../config/config.js";
 import { UserAnswer } from "../models/index.js";
 import axios from "axios";
 
 // Initialize OpenAI
 const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-  baseURL: "https://api.openai.com/v1",
+  apiKey: GITHUB_TOKEN || OPENAI_API_KEY,
+  baseURL: AZURE_ENDPOINT || "https://api.openai.com/v1",
 });
 
 // Function to check if a video is available
