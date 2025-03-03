@@ -18,6 +18,7 @@ import {
   getTherapistsWithAnswers,
   updateTherapistAnswer,
 } from "../controllers/therapistAnswerController.js";
+import upload from "../middlewares/multerMiddleware.js";
 
 const therapistRouter = Router();
 
@@ -28,11 +29,11 @@ therapistRouter.route("/check-session").get(isAuthorized, checkSession);
 therapistRouter.route("/login").post(isActive, loginTherapist);
 therapistRouter.route("/logout").post(logoutTherapist);
 
-// get all therapists, create therapist
-therapistRouter
-  .route("/")
-  .get(isAuthorized, getTherapists)
-  .post(createTherapist);
+// create therapist
+therapistRouter.post("/register", upload.single("image"), createTherapist);
+
+// get all therapists
+therapistRouter.route("/").get(isAuthorized, getTherapists);
 
 // gets all the therapists with their answers
 therapistRouter
