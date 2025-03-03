@@ -24,6 +24,8 @@ export const createUserAnswer = asyncHandler(async (req, res, next) => {
   const user_id = req.params.id;
   const { question_id, answer } = req.body;
 
+  console.log("Creating UserAnswer with:", { user_id, question_id, answer });
+
   try {
     if (!user_id || !question_id || !answer) {
       return next(new ErrorResponse("Please provide all required fields", 400));

@@ -11,6 +11,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const AZURE_ENDPOINT = process.env.AZURE_ENDPOINT;
 const MODEL_NAME = process.env.MODEL_NAME;
+const storageBucket = process.env.FIREBASE_SERVICE_BUCKET_NAME;
 
 export {
   PORT,
@@ -23,4 +24,5 @@ export {
   GITHUB_TOKEN,
   AZURE_ENDPOINT,
   MODEL_NAME,
+  storageBucket,
 };
