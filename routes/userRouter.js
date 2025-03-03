@@ -41,11 +41,13 @@ userRouter.post("/register", upload.single("image"), createUser);
 // get all users
 userRouter.route("/").get(isAuthorized, getUsers);
 
-// get, update, delete user
+//update user
+userRouter.route("/:id").put(isAuthorized, upload.single("image"), updateUser);
+
+// get, delete user
 userRouter
   .route("/:id")
   .get(isAuthorized, getUser)
-  .put(isAuthorized, isOwner, updateUser)
   .delete(isAuthorized, isOwner, deleteUser);
 
 // get all user answers, create user answer

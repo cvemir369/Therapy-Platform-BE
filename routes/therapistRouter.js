@@ -32,6 +32,11 @@ therapistRouter.route("/logout").post(logoutTherapist);
 // create therapist
 therapistRouter.post("/register", upload.single("image"), createTherapist);
 
+//update user
+therapistRouter
+  .route("/:id")
+  .put(isAuthorized, upload.single("image"), updateTherapist);
+
 // get all therapists
 therapistRouter.route("/").get(isAuthorized, getTherapists);
 
@@ -44,7 +49,6 @@ therapistRouter
 therapistRouter
   .route("/:id")
   .get(isAuthorized, getTherapist)
-  .put(isAuthorized, isOwner, updateTherapist)
   .delete(isAuthorized, isOwner, deleteTherapist);
 
 // get all therapist answers, create therapist answer

@@ -138,6 +138,37 @@ export const updateUser = asyncHandler(async (req, res, next) => {
     req.body.password = await bcrypt.hash(password, 10);
   }
 
+  // Handle image upload to Firebase
+  if (req.file) {
+    try {
+      const fileName = `images/${username}/${username}_${Date.now()}.${
+        req.file.mimetype.split("/")[1]
+      }`;
+      const fileUpload = bucket.file(fileName);
+      const blobStream = fileUpload.createWriteStream({
+        metadata: {
+          contentType: req.file.mimetype,
+        },
+      });
+
+      await new Promise((resolve, reject) => {
+        blobStream.on("error", reject);
+        blobStream.on("finish", resolve);
+        blobStream.end(req.file.buffer);
+      });
+
+      const [signedUrl] = await fileUpload.getSignedUrl({
+        action: "read",
+        expires: "03-01-2500",
+      });
+
+      req.body.image = signedUrl;
+    } catch (error) {
+      console.error("Firebase Upload Error:", error);
+      return next(new ErrorResponse("Image upload failed", 500));
+    }
+  }
+
   const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
