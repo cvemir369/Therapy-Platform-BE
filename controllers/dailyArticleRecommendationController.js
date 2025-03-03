@@ -4,10 +4,11 @@ import {
   MODEL_NAME,
   OPENAI_API_KEY,
   AZURE_ENDPOINT,
+  GITHUB_TOKEN,
 } from "../config/config.js";
 import { UserAnswer } from "../models/index.js";
 
-const key = OPENAI_API_KEY;
+const key = GITHUB_TOKEN || OPENAI_API_KEY;
 const openai = new OpenAI({
   apiKey: key,
   baseURL: AZURE_ENDPOINT,
