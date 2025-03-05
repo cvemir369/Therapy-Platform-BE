@@ -7,7 +7,7 @@ import { JWT_SECRET } from "../config/config.js";
 const isAuthorized = asyncHandler(async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
-    next();
+    return next();
   }
 
   try {
