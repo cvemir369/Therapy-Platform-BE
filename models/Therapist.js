@@ -15,7 +15,11 @@ const therapistSchema = new Schema({
     unique: [true, "Username is already taken"],
   },
   password: { type: String, required: [true, "Password is required"] },
-  image: { type: String, default: "" },
+  image: {
+    type: String,
+    default:
+      "https://firebasestorage.googleapis.com/v0/b/pokemon-battle-game.firebasestorage.app/o/user-avatar.png?alt=media&token=06e226b6-ed98-4073-b5f5-0008625b9bcb",
+  },
   isActive: { type: Boolean, default: true }, // for soft delete
 });
 

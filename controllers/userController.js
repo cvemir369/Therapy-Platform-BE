@@ -25,7 +25,8 @@ export const getUser = asyncHandler(async (req, res, next) => {
 export const createUser = asyncHandler(async (req, res, next) => {
   const { name, phone, email, username, password } = req.body;
   const file = req.file;
-  let imageUrl = "default-profile.png"; // Default image
+  let imageUrl =
+    "https://firebasestorage.googleapis.com/v0/b/pokemon-battle-game.firebasestorage.app/o/user-avatar.png?alt=media&token=06e226b6-ed98-4073-b5f5-0008625b9bcb"; // Default image
 
   try {
     if (!name || !phone || !email || !username || !password) {
