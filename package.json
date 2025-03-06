@@ -18,13 +18,18 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.5.0",
+    "axios": "^1.8.1",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "firebase-admin": "^13.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
-    "openai": "^4.85.3",
+    "openai": "^4.86.1",
+    "multer": "^1.4.5-lts.1",
+
+
     "socket.io": "^4.8.1"
   }
 }

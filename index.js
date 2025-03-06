@@ -20,6 +20,12 @@ import { Message } from "./models/index.js"; // Import Message Model
 import matchingRouter from "./routes/matchingRouter.js";
 // ChatBot
 import chatBotRouter from "./routes/chatBotRouter.js";
+// dailyArticleRecommendationRouter
+import dailyArticleRecommendationRouter from "./routes/dailyArticleRecommendationRouter.js";
+// moodActivityRouter
+import moodActivityRouter from "./routes/moodActivityRouter.js";
+// VideoRouter
+import videoRouter from "./routes/videoRouter.js";
 
 const app = express();
 const server = http.createServer(app); // Create an HTTP server
@@ -50,6 +56,14 @@ app.use("/messages", messageRouter);
 app.use("/advice", adviceRouter);
 // ChatBot
 app.use("/chatBot", chatBotRouter);
+// dailyArticleRecommendationRouter
+app.use("/daily-article", dailyArticleRecommendationRouter);
+// Mount the mood activity router at /mood-activity
+app.use("/mood-activity", moodActivityRouter);
+
+// VideoRouter
+app.use("/video-recommendation", videoRouter);
+
 // WebSocket Logic
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);

@@ -61,3 +61,15 @@ export const getChatters = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Failed to get chatters", 500));
   }
 });
+
+// Get users who have received messages from the current user
+export const getChattees = asyncHandler(async (req, res, next) => {
+  const { from, fromModel } = req.query;
+  try {
+    const chattees = await Message.find({ from, fromModel }).distinct("to");
+    const formattedChattees = chattees.map((chattee) => ({ _id: chattee }));
+    res.status(200).json(formattedChattees);
+  } catch (error) {
+    return next(new ErrorResponse("Failed to get chattees", 500));
+  }
+});

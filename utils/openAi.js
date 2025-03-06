@@ -53,7 +53,7 @@ export const analyzeResponse = async (jsonResponse) => {
   }
 };
 
-export const generateAdvice = async (diagnosis, journalAnalysis) => {
+export const generateAdvice = async (diagnosis, journalAnalysis, res) => {
   const emotions =
     [...(diagnosis.emotions || []), ...(journalAnalysis?.emotions || [])].join(
       ", "
@@ -72,28 +72,64 @@ export const generateAdvice = async (diagnosis, journalAnalysis) => {
     ].join(", ") || "no recommended therapy";
 
   const prompt = `
-  A user is experiencing the following emotions: ${emotions}.
-  They have been diagnosed with: ${conditions}.
-  Recommended therapies include: ${specialties}.
-  
-  Please provide a **supportive and structured** response following these steps:
-  1. **Do NOT address the user by name or use "Dear User" or similar phrases.** Just start naturally.
-  2. **Start with an introduction**: "Based on your input, I've noticed that recently you have been dealing with ${emotions} and struggling. You're not alone in this, and I'm here to help."
-  3. **Acknowledge their feelings** and show empathy.
-  4. **Introduce the next steps**: "I will provide some tips to help you manage ${conditions} and feel more in control."
-  5. **List at least 5 actionable, practical tips** for dealing with ${conditions}. Format them as a bullet-point list with clear explanations.
-  6. **End with encouragement**, reassuring them that they are not alone and that small steps can lead to improvement.
-  7. **DO NOT say things like "I'm sorry, I can't help" or just "seek professional help" unless absolutely necessary.**
-  8. **Keep the tone supportive, concise, and empowering.**
-  `;
+    A user is experiencing the following emotions: ${emotions}.
+    They have been diagnosed with: ${conditions}.
+    Recommended therapies include: ${specialties}.
 
-  const response = await openai.chat.completions.create({
-    model: modelName,
+    Please generate a **fully structured HTML response**. Follow these strict guidelines:
+
+    1. **Do NOT escape HTML characters** (e.g., use <h2> instead of &lt;h2&gt;).
+    2. **Only use these HTML elements**:
+       - <h2> for section headings
+       - <p> for paragraphs
+       - <ul><li> for bullet points
+       - <strong> for emphasizing important text
+    3. **Your response should only contain HTML**—no plain text, no markdown, no explanations.
+    4. **Ensure all tags are correctly opened and closed.**
+
+    ### **Example Response Format:**
+    <h2><strong>Understanding Your Emotions:</strong></h2>
+    <p>Experiencing emotions like anxiety, stress, or depression can be challenging. Recognizing these feelings is an important first step.</p>
+
+    <h2><strong>Your Diagnoses:</strong></h2>
+    <p>You have been diagnosed with the following:</p>
+    <ul>
+      <li> - Anxiety</li>
+      <li> - Depression</li>
+    </ul>
+    <p>Addressing each of these can help you regain a sense of control over your emotions.</p>
+
+    <h2>Recommended Therapies:</h2>
+    <ul>
+      <li><strong>Cognitive Behavioral Therapy (CBT):</strong> Helps manage negative thought patterns.</li>
+      <li><strong>Mindfulness Therapy:</strong> Improves focus and reduces stress.</li>
+    </ul>
+
+    <h2><strong>Steps You Can Take:</strong></h2>
+    <p>Here are some actionable steps to improve well-being:</p>
+    <ul>
+      <li>Practice daily meditation.</li>
+      <li>Engage in regular physical activity.</li>
+    </ul>
+
+    <h2><strong>Conclusion:</strong></h2>
+    <p>Seeking help is a sign of strength. Small steps lead to big improvements.</p>
+
+    ### **Only return valid HTML—nothing else.**
+    `;
+
+  const stream = await openai.chat.completions.create({
+    model: modelName || "gpt-4-turbo",
     messages: [{ role: "system", content: prompt }],
-    max_tokens: 800,
+    stream: true, // Enable streaming
   });
 
-  return {
-    advice: response.choices[0].message.content, // Return advice in a JSON object
-  };
+  res.setHeader("Content-Type", "text/html");
+  res.setHeader("Transfer-Encoding", "chunked");
+
+  for await (const chunk of stream) {
+    res.write(chunk.choices[0]?.delta?.content || ""); // Send each chunk
+  }
+
+  res.end();
 };

@@ -132,7 +132,8 @@ export const matchUserWithTherapists = async (req, res) => {
           content:
             "You are an AI that matches therapists to users based solely on keyword overlaps. " +
             "Given a user with certain diagnosis and therapist specialty needs, rank the therapists based on a match percentage (0-100). " +
-            "Please respond strictly in JSON format.",
+            "Please respond strictly in JSON format." +
+            "Make the object structured like this: { matches: [ { therapist_id: 'therapistId1', match_percentage: 85 }, ... ] }",
         },
         { role: "user", content: JSON.stringify(structuredPrompt) },
       ],

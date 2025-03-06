@@ -4,6 +4,7 @@ import ErrorResponse from "../utils/ErrorResponse.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { JWT_SECRET, NODE_ENV } from "../config/config.js";
+import { bucket } from "../config/firebaseConfig.js";
 
 // Get all therapists
 export const getTherapists = asyncHandler(async (req, res, next) => {
@@ -22,7 +23,10 @@ export const getTherapist = asyncHandler(async (req, res, next) => {
 
 // Create and login a new therapist
 export const createTherapist = asyncHandler(async (req, res, next) => {
-  const { name, phone, email, username, password, image } = req.body;
+  const { name, phone, email, username, password } = req.body;
+  const file = req.file;
+  let imageUrl =
+    "https://firebasestorage.googleapis.com/v0/b/pokemon-battle-game.firebasestorage.app/o/user-avatar.png?alt=media&token=06e226b6-ed98-4073-b5f5-0008625b9bcb"; // Default image
 
   try {
     if (!name || !phone || !email || !username || !password) {
@@ -39,6 +43,37 @@ export const createTherapist = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse("Username is already taken", 400));
     }
 
+    // Upload image to Firebase if file exists
+    if (file) {
+      try {
+        const fileName = `images/${username}/${username}_${Date.now()}.${
+          file.mimetype.split("/")[1]
+        }`;
+        const fileUpload = bucket.file(fileName);
+        const blobStream = fileUpload.createWriteStream({
+          metadata: {
+            contentType: file.mimetype,
+          },
+        });
+
+        await new Promise((resolve, reject) => {
+          blobStream.on("error", reject);
+          blobStream.on("finish", resolve);
+          blobStream.end(file.buffer);
+        });
+
+        const [signedUrl] = await fileUpload.getSignedUrl({
+          action: "read",
+          expires: "03-01-2500",
+        });
+
+        imageUrl = signedUrl;
+      } catch (error) {
+        console.error("Firebase Upload Error:", error);
+        return next(new ErrorResponse("Image upload failed", 500));
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newTherapist = new Therapist({
@@ -47,28 +82,37 @@ export const createTherapist = asyncHandler(async (req, res, next) => {
       email: lowerCaseEmail,
       username,
       password: hashedPassword,
-      image,
+      image: imageUrl,
     });
+
     await newTherapist.save();
 
     // Login therapist automatically after registration
-    const therapist = await Therapist.findOne({ email: lowerCaseEmail });
     const token = jwt.sign(
-      { id: therapist._id, role: "therapist" },
+      { id: newTherapist._id, role: "therapist" },
       JWT_SECRET,
       {
         expiresIn: "24h",
       }
     );
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: NODE_ENV === "production",
       sameSite: "lax",
     });
+
     res.status(200).json({
       message: "Therapist created and logged in successfully",
       token: token,
-      therapist: therapist,
+      therapist: {
+        _id: newTherapist._id,
+        name: newTherapist.name,
+        email: newTherapist.email,
+        username: newTherapist.username,
+        image: newTherapist.image,
+        phone: newTherapist.phone,
+      },
     });
   } catch (error) {
     return next(new ErrorResponse(error.message, 500));
@@ -97,6 +141,37 @@ export const updateTherapist = asyncHandler(async (req, res, next) => {
 
   if (password) {
     req.body.password = await bcrypt.hash(password, 10);
+  }
+
+  // Handle image upload to Firebase
+  if (req.file) {
+    try {
+      const fileName = `images/${username}/${username}_${Date.now()}.${
+        req.file.mimetype.split("/")[1]
+      }`;
+      const fileUpload = bucket.file(fileName);
+      const blobStream = fileUpload.createWriteStream({
+        metadata: {
+          contentType: req.file.mimetype,
+        },
+      });
+
+      await new Promise((resolve, reject) => {
+        blobStream.on("error", reject);
+        blobStream.on("finish", resolve);
+        blobStream.end(req.file.buffer);
+      });
+
+      const [signedUrl] = await fileUpload.getSignedUrl({
+        action: "read",
+        expires: "03-01-2500",
+      });
+
+      req.body.image = signedUrl;
+    } catch (error) {
+      console.error("Firebase Upload Error:", error);
+      return next(new ErrorResponse("Image upload failed", 500));
+    }
   }
 
   const updatedTherapist = await Therapist.findByIdAndUpdate(

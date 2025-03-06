@@ -24,6 +24,7 @@ import {
   updateJournal,
   deleteJournal,
 } from "../controllers/journalController.js";
+import upload from "../middlewares/multerMiddleware.js";
 
 const userRouter = Router();
 
@@ -34,14 +35,19 @@ userRouter.route("/check-session").get(isAuthorized, checkSession);
 userRouter.route("/login").post(isActive, loginUser);
 userRouter.route("/logout").post(logoutUser);
 
-// get all users, create user
-userRouter.route("/").get(isAuthorized, getUsers).post(createUser);
+// create user
+userRouter.post("/register", upload.single("image"), createUser);
 
-// get, update, delete user
+// get all users
+userRouter.route("/").get(isAuthorized, getUsers);
+
+//update user
+userRouter.route("/:id").put(isAuthorized, upload.single("image"), updateUser);
+
+// get, delete user
 userRouter
   .route("/:id")
   .get(isAuthorized, getUser)
-  .put(isAuthorized, isOwner, updateUser)
   .delete(isAuthorized, isOwner, deleteUser);
 
 // get all user answers, create user answer
