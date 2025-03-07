@@ -1,7 +1,7 @@
 import { Diagnosis } from "../models/index.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
-import { generateAdvice } from "../utils/openAi.js"; // Function to get AI-generated advice
+import { generateAdvice } from "../utils/openAi.js";
 
 export const getAdviceByUserId = asyncHandler(async (req, res, next) => {
   const user_id = req.params.id;
