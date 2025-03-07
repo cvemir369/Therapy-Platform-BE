@@ -99,7 +99,7 @@ export const createTherapist = asyncHandler(async (req, res, next) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none",
     });
 
     res.status(200).json({
@@ -221,7 +221,7 @@ export const loginTherapist = asyncHandler(async (req, res, next) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "none",
   });
   res.status(200).json({
     message: "Therapist logged in successfully",

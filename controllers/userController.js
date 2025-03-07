@@ -95,7 +95,7 @@ export const createUser = asyncHandler(async (req, res, next) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none",
     });
 
     res.status(200).json({
@@ -213,7 +213,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "none",
   });
   res.status(200).json({
     message: "User logged in successfully",
